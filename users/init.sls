@@ -40,6 +40,12 @@ include:
     - name: {{ name }}
     - home: {{ home }}
     - shell: {{ user.get('shell', '/bin/bash') }}
+    {% if 'password' in user -%}
+    - password: {{ user['password'] }}
+    {% endif -%}
+    {% if 'enforce_password' in user -%}
+    - enforce_password: {{ user['enforce_password'] }}
+    {% endif -%}
     {% if 'uid' in user -%}
     - uid: {{ user['uid'] }}
     {% endif -%}
