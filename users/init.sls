@@ -115,8 +115,22 @@ user_{{ name }}_public_key:
   {% for auth in user['ssh_auth'] %}
 ssh_auth_{{ name }}_{{ loop.index0 }}:
   ssh_auth.present:
+    {%- if auth is string %}
     - user: {{ name }}
     - name: {{ auth }}
+    {%- else %}
+    - user: {{ auth.get('user', name) }}
+    - name: {{ auth['name'] }}
+      {%- if 'enc' in auth %}
+    - enc: {{ auth['enc'] }}
+      {%- endif %}
+      {%- if 'options' in auth %}
+    - options:
+        {%- for opt, val in auth['options'].iteritems() %}
+      - {{ opt }}="{{ val }}"
+        {%- endfor %}
+      {%- endif %}
+    {%- endif %}
     - require:
         - file: {{ name }}_user
         - user: {{ name }}_user
